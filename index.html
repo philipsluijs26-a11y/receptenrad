@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReceptenRad Pro - Jouw Complete Keukenhulp</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- INLOGSCHERM -->
+    <div id="loginSection" class="login-wrapper">
+        <div class="login-card">
+            <div class="logo-circle">🎡</div>
+            <h1>ReceptenRad</h1>
+            <p>Log in of maak direct een account aan om je persoonlijke recepten, maandarchief en weekmenu te bewaren.</p>
+            
+            <input type="text" id="usernameInput" placeholder="Wat is je voornaam?">
+            <input type="email" id="emailInput" placeholder="Je e-mailadres">
+            
+            <div class="password-wrapper">
+                <input type="password" id="passwordInput" placeholder="Kies of typ je wachtwoord">
+                <button type="button" id="togglePassBtn" class="eye-btn" title="Toon/verberg wachtwoord">👁️</button>
+            </div>
+
+            <label class="remember-row">
+                <input type="checkbox" id="rememberMeCheckbox" checked>
+                <span>Ingelogd blijven op dit apparaat</span>
+            </label>
+
+            <div id="loginError" class="error-msg" style="display: none;"></div>
+
+            <button id="loginBtn" class="primary-btn big-btn">Start ReceptenRad 🚀</button>
+        </div>
+    </div>
+
+    <!-- HOOFDAPPLICATIE (BREED DASHBOARD) -->
+    <div id="appSection" class="app-layout" style="display: none;">
+        
+        <!-- ZIJBALK (SIDEBAR) -->
+        <aside class="sidebar">
+            <div class="brand-box">
+                <span class="brand-icon">🎡</span>
+                <div>
+                    <h2>ReceptenRad</h2>
+                    <small id="welcomeUser">Chef</small>
+                </div>
+            </div>
+
+            <nav class="side-nav">
+                <button class="nav-btn active" data-tab="tab-rad">🎲 Het ReceptenRad</button>
+                <button class="nav-btn" data-tab="tab-boek">📖 Receptenboek <span id="recipeCount" class="nav-badge">0</span></button>
+                <button class="nav-btn" data-tab="tab-archief">🗂️ Maandarchief <span id="historyCount" class="nav-badge">0</span></button>
+                <button class="nav-btn" data-tab="tab-boodschappen">🛒 Boodschappen <span id="groceryCount" class="nav-badge">0</span></button>
+                <button class="nav-btn" data-tab="tab-agenda">📅 Weekmenu & Timer</button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="darkModeBtn" class="theme-btn">🌙 Donkere Modus</button>
+                <button id="logoutBtn" class="logout-btn">Uitloggen</button>
+            </div>
+        </aside>
+
+        <!-- HOOFDSCHERM RECHTS -->
+        <div class="main-area">
+            
+            <!-- BOVENSTE STATISTIEKEN BALK -->
+            <header class="stats-bar">
+                <div class="stat-card">
+                    <span class="stat-icon">📚</span>
+                    <div>
+                        <small>In het Rad</small>
+                        <strong id="statTotalRecipes">0 recepten</strong>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">⭐</span>
+                    <div>
+                        <small>Favorieten</small>
+                        <strong id="statFavs">0 opgeslagen</strong>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🛒</span>
+                    <div>
+                        <small>Boodschappen</small>
+                        <strong id="statGroceries">0 te halen</strong>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">👨‍🍳</span>
+                    <div>
+                        <small>Gekookt deze maand</small>
+                        <strong id="statCooked">0 maaltijden</strong>
+                    </div>
+                </div>
+            </header>
+
+            <!-- TAB 1: HET RAD & UITGEBREIDE RECEPTKAART -->
+            <main id="tab-rad" class="tab-content active">
+                <div class="rad-dashboard-grid">
+                    
+                    <!-- Linkerkolom: Het Draaiende Rad -->
+                    <div class="card rad-panel">
+                        <h3>Draai voor je avondeten!</h3>
+                        
+                        <div class="filter-group">
+                            <select id="categoryFilter">
+                                <option value="Alles">🍽️ Alle categorieën</option>
+                                <option value="Vlees">🥩 Vlees & Kip</option>
+                                <option value="Vega">🌱 Vegetarisch</option>
+                                <option value="Vis">🐟 Vis & Zeevruchten</option>
+                            </select>
+                            <select id="timeFilter">
+                                <option value="999">⏱️ Elke bereidingstijd</option>
+                                <option value="15">⚡ Supersnel (max 15 min)</option>
+                                <option value="25">🏃 Snel klaar (max 25 min)</option>
+                            </select>
+                        </div>
+
+                        <div class="wheel-wrapper">
+                            <div class="wheel-pointer">▼</div>
+                            <div id="wheel" class="wheel">
+                                <div class="wheel-inner">
+                                    <span id="wheelIcon">🍳</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="spinBtn" class="spin-btn">DRAAI AAN HET RAD!</button>
+                        <button id="surpriseThreeBtn" class="secondary-outline-btn">🎯 Geef mij 3 keuzes</button>
+                        <div id="threeChoicesBox" class="three-choices" style="display: none;"></div>
+                    </div>
+
+                    <!-- Rechterkolom: Receptkaart met Portie-calculator -->
+                    <div class="card recipe-detail-panel">
+                        <div id="emptyRecipeState" class="empty-state">
+                            <div class="empty-icon">🎲</div>
+                            <h3>Weet je niet wat je moet koken?</h3>
+                            <p>Kies links je filters en geef een slinger aan het ReceptenRad!</p>
+                        </div>
+
+                        <div id="activeRecipeCard" style="display: none;">
+                            <div class="recipe-top-bar">
+                                <div class="badge-group">
+                                    <span id="recCategory" class="badge">Categorie</span>
+                                    <span id="recTime" class="time-badge">⏱️ 20 min</span>
+                                </div>
+                                
+                                <!-- Portie Calculator -->
+                                <div class="portion-control">
+                                    <span>👥 Personen:</span>
+                                    <button id="portionMinus" class="port-btn">-</button>
+                                    <strong id="portionCount">2</strong>
+                                    <button id="portionPlus" class="port-btn">+</button>
+                                </div>
+                            </div>
+
+                            <h2 id="recTitle" class="recipe-main-title">Naam van het recept</h2>
+                            
+                            <div class="recipe-columns">
+                                <div class="ing-col">
+                                    <h4>🧺 Ingrediënten</h4>
+                                    <ul id="recIngredients"></ul>
+                                </div>
+                                <div class="steps-col">
+                                    <h4>👩‍🍳 Bereidingswijze</h4>
+                                    <ol id="recSteps"></ol>
+                                </div>
+                            </div>
+
+                            <div class="action-bar">
+                                <button id="favBtn" class="act-btn fav">❤️ Favoriet</button>
+                                <button id="addAllGroceriesBtn" class="act-btn groc">🛒 Zet op Boodschappenlijst</button>
+                                <button id="logHistoryBtn" class="act-btn arch">✅ Vandaag Gekookt (Archief)</button>
+                                
+                                <div class="quick-plan">
+                                    <select id="quickDaySelect">
+                                        <option value="Maandag">Maandag</option>
+                                        <option value="Dinsdag">Dinsdag</option>
+                                        <option value="Woensdag">Woensdag</option>
+                                        <option value="Donderdag">Donderdag</option>
+                                        <option value="Vrijdag">Vrijdag</option>
+                                        <option value="Zaterdag">Zaterdag</option>
+                                        <option value="Zondag">Zondag</option>
+                                    </select>
+                                    <button id="quickPlanBtn" class="act-btn plan">📅 Plan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+
+            <!-- TAB 2: RECEPTENBOEK & EIGEN RECEPT TOEVOEGEN -->
+            <main id="tab-boek" class="tab-content">
+                <div class="boek-grid">
+                    <div class="card">
+                        <h3>⭐ Jouw Favoriete Gerechten</h3>
+                        <ul id="favoritesList" class="styled-list"></ul>
+                        
+                        <hr class="divider">
+
+                        <h3>➕ Eigen Recept Toevoegen</h3>
+                        <div class="form-stack">
+                            <input type="text" id="newTitle" placeholder="Naam van het gerecht (bijv. Oma's Gehaktballen)">
+                            <div class="form-row">
+                                <select id="newCategory">
+                                    <option value="Vlees">🥩 Vlees & Kip</option>
+                                    <option value="Vega">🌱 Vegetarisch</option>
+                                    <option value="Vis">🐟 Vis</option>
+                                </select>
+                                <input type="number" id="newTime" placeholder="Kooktijd (min)" value="25">
+                            </div>
+                            <textarea id="newIngredients" rows="3" placeholder="Ingrediënten voor 2 personen (scheid met een komma, bijv: 300g gehakt, 1 ui, 2 tomaten)"></textarea>
+                            <textarea id="newSteps" rows="3" placeholder="Stappen (scheid elke stap met een punt, bijv: Snijd de ui. Bak het gehakt bruin.)"></textarea>
+                            <button id="saveNewRecipeBtn" class="primary-btn">Opslaan in ReceptenRad</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="flex-between">
+                            <h3>📚 Complete Receptenbibliotheek</h3>
+                            <select id="bookCategoryFilter" style="width: auto;">
+                                <option value="Alles">Alle</option>
+                                <option value="Vlees">Vlees</option>
+                                <option value="Vega">Vega</option>
+                                <option value="Vis">Vis</option>
+                            </select>
+                        </div>
+                        <input type="text" id="searchInput" placeholder="🔍 Zoek op receptnaam of ingrediënt (bijv. rijst, zalm, kip)..." class="search-bar">
+                        <div id="allRecipesContainer" class="recipe-mini-grid"></div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- TAB 3: MAANDELIJKS KOOKARCHIEF -->
+            <main id="tab-archief" class="tab-content">
+                <div class="card">
+                    <div class="flex-between">
+                        <div>
+                            <h3>🗂️ Persoonlijk Kookarchief (Per Maand)</h3>
+                            <p class="sub-text">Hier zie je precies welke recepten je per maand hebt klaargemaakt.</p>
+                        </div>
+                        <button id="clearHistoryBtn" class="danger-btn">Archief wissen</button>
+                    </div>
+                    <div id="monthlyArchiveContainer" class="archive-container"></div>
+                </div>
+            </main>
+
+            <!-- TAB 4: SLIMME BOODSCHAPPENLIJST -->
+            <main id="tab-boodschappen" class="tab-content">
+                <div class="card narrow-card">
+                    <div class="flex-between">
+                        <h3>🛒 Slimme Boodschappenlijst</h3>
+                        <div style="display:flex; gap:8px;">
+                            <button id="shareWhatsappBtn" class="whatsapp-btn">📲 Deel via WhatsApp</button>
+                            <button id="clearGroceriesBtn" class="danger-btn">Alles wissen</button>
+                        </div>
+                    </div>
+                    <div class="manual-grocery">
+                        <input type="text" id="customGroceryInput" placeholder="Extra product toevoegen (bijv. 2 pakken melk)...">
+                        <button id="addCustomGroceryBtn" class="primary-btn">Toevoegen</button>
+                    </div>
+                    <ul id="groceriesList" class="checklist"></ul>
+                </div>
+            </main>
+
+            <!-- TAB 5: WEEKPLANNING & ECHTE KOOKWEKKER -->
+            <main id="tab-agenda" class="tab-content">
+                <div class="boek-grid">
+                    <div class="card">
+                        <div class="flex-between">
+                            <h3>🗓️ Jouw Weekplanning</h3>
+                            <button id="autoFillWeekBtn" class="secondary-outline-btn" style="width:auto; padding:8px 12px;">🎲 Vul hele week willekeurig</button>
+                        </div>
+                        <div id="calendarGrid" class="calendar-grid"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3>⏱️ Digitale Kookwekker (Met Geluid)</h3>
+                        <div class="timer-display-box">
+                            <div id="liveTimerDisplay" class="digital-clock">20:00</div>
+                            <div class="timer-controls">
+                                <button id="timerStartBtn" class="act-btn groc">▶ Start</button>
+                                <button id="timerPauseBtn" class="act-btn fav">⏸ Pauze</button>
+                                <button id="timerResetBtn" class="danger-btn">⏹ Reset</button>
+                            </div>
+                        </div>
+
+                        <hr class="divider">
+
+                        <h3>🔔 Hoe laat moet ik beginnen?</h3>
+                        <div class="form-stack">
+                            <label>Hoe laat wil je aan tafel?</label>
+                            <input type="time" id="eatTimeInput" value="18:00">
+                            <label>Bereidingstijd (minuten):</label>
+                            <input type="number" id="prepTimeInput" value="25">
+                            <button id="calcReminderBtn" class="primary-btn">Bereken Kook-Starttijd</button>
+                            <div id="reminderResult" class="alarm-box" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
